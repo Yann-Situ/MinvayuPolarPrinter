@@ -1,7 +1,7 @@
 # MinvayuPolarPrinter
 Information about Minvayu's polar printer.
 
-The MinvayPolarPrinter runs on a [DuetWifi board](https://www.duet3d.com/DuetWifi) with [RepRapFirmware v.3.4.1](#firmware).
+The MinvayPolarPrinter runs on a [DuetWifi board](https://www.duet3d.com/DuetWifi) with [RepRapFirmware v.3.4.1](#the-firmware).
 
 ## Connecting With The Duet Board
 
@@ -14,7 +14,7 @@ A local name address is also created: our **DuetWebControl** MinvayuPolarPrinter
 
 **DuetWebControl** can be used to control the board from wifi, using a computer or smartphone. With this interface, it is possible to send Gcode lines, run Gcode macros, change configuration, start printing work and even handle height maps. See [Duet Web Control Manual](https://docs.duet3d.com/User_manual/Reference/Duet_Web_Control_Manual) for more information.
 
-## The Firmware {#firmware}
+## The Firmware
 
 The MinvayPolarPrinter uses the RepRapFirmware v.3.4.1 ([main Github page](https://github.com/Duet3D/RepRapFirmware) and  [releases page](https://github.com/Duet3D/RepRapFirmware/releases)) with a *polar kinematics configuration*. The polar kinematics configuration is intended to be used for a *turntable polar printer*, but it can also be used for our purpose, considering the whole universe as a turntable.
 
@@ -25,7 +25,7 @@ The polar configuration is done by following the steps of the [PolarKinematics c
 ## The Slicer
 
 Common slicer softwares (*Cura*, *PrusaSlic3r*, *Slic3r*) can be configured for a round bed shape. However it doesn't seem possible to configure the software to check if the print object is inside our annulus printing area.\
-We created a python script for this purpose (see [`check_polar_gcode.py`](#checkpolargcode)).
+We created a python script for this purpose (see [`check_polar_gcode.py`](#check_polar_gcodepy)).
 
 ## Connecting Servomotor
 
@@ -69,7 +69,7 @@ See the [mesh bed compensation page](https://docs.duet3d.com/en/User_manual/Conn
 ## Additional Python Scripts
 This directory contains two handmade python scripts:
 
-### `check_polar_gcode.py` {#checkpolargcode}
+### `check_polar_gcode.py`
 
 Take a **gcode file** as input and check if the nozzle xy-coordinate movement stays between a distance of `minradius` and `maxradius` from the `origin`.\
 As *Cura*, *Slic3r* and *PrusaSlic3r* can't check if the print object is inside our annulus printing area, it is possible to use this script on the resulting gcode file to check if the print will be valid.
