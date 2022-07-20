@@ -16,7 +16,7 @@ The user might want to redirect the output to a gcode file: `python3 generate_po
 
 The parameter lines should follow the following pattern: `order radius origin_x origin_y` (where order is the number of points).
 The three last arguments can be ommited: default radius is 1.0, default origin is (0.0,0.0).
-For example, the line `4 1 3 0` will represent a square a radius 1.0 centered at (3,0). Hence, the coordinates of the square points will be [(4,0),(3,1),(2,0),(3,-1)]
+For example, the line `4 1 3 0` will represent a square of radius 1.0 centered at (3,0). Hence, the coordinates of the square points will be [(4,0),(3,1),(2,0),(3,-1)]
 
 optional arguments:
 -nohoming  : avoid the G28 command at the beginning of the generated gcode_file.

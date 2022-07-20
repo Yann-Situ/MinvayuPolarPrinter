@@ -1,18 +1,18 @@
 # MinvayuPolarPrinter
-Information about Minvayu's polar printer.
-
-The MinvayPolarPrinter runs on a [DuetWifi board](https://www.duet3d.com/DuetWifi) with [RepRapFirmware v.3.4.1](#the-firmware).
+Information about Minvayu's polar printer. The MinvayPolarPrinter runs on a [DuetWifi board](https://www.duet3d.com/DuetWifi) with [RepRapFirmware v.3.4.1](#the-firmware). It is a 3D printer for architectural purpose with a central rotating axis (similar to a crane).
 
 ## Connecting With The Duet Board
 
 See [Getting connected to your Duet](https://docs.duet3d.com/en/How_to_guides/Getting_connected/Getting_connected_to_your_Duet) for detailed information.
 
-Briefly, an interface is needed to communicate and send some Gcode to the Duet board. To do that, it is possible to use the GUI interface `cutecom` on linux (or `YAT` on windows) after wiring the board to the computer. It is also possible to send Gcode directly from the **DuetWebControl** interface.
+The best way to communicate with the board is the **DuetWebControl** interface.
+**DuetWebControl** can be used to control the board using a computer or smartphone connected to the same wifi point. With this interface, it is possible to send gcode lines, run gcode macros, change configuration, start printing work and even handle height maps. See [Duet Web Control Manual](https://docs.duet3d.com/User_manual/Reference/Duet_Web_Control_Manual) for more information.
 
-The user can connect the board to the wifi using [M552](https://docs.duet3d.com/User_manual/Reference/Gcodes/M552) and [M587](https://docs.duet3d.com/User_manual/Reference/Gcodes/M587) commands. After connecting, send `M552 S1` to get the IP address and connect to the **DuetWebControl** by typing the address in the browser.\
-A local name address is also created: our **DuetWebControl** MinvayuPolarPrinter interface can be accessed using the following link: http://www.polarprinter.local (note that the board needs to be powered up to access the interface).
+To access **DuetWebControl**, it is firstly necessary to communicate some gcode to the Duet board using another interface. To do that, it is possible to use the GUI interface `cutecom` on linux (or `YAT` on windows) after wiring the board to the computer.\
+Then, the user can connect the board to the wifi using [M552](https://docs.duet3d.com/User_manual/Reference/Gcodes/M552) and [M587](https://docs.duet3d.com/User_manual/Reference/Gcodes/M587) commands.
 
-**DuetWebControl** can be used to control the board from wifi, using a computer or smartphone. With this interface, it is possible to send Gcode lines, run Gcode macros, change configuration, start printing work and even handle height maps. See [Duet Web Control Manual](https://docs.duet3d.com/User_manual/Reference/Duet_Web_Control_Manual) for more information.
+After connecting, send `M552 S1` to get the IP address and connect to the **DuetWebControl** by typing the address in the browser.\
+A local name address is also created: our **DuetWebControl** MinvayuPolarPrinter interface can be accessed using the following link http://www.polarprinter.local (note that the board needs to be powered up to access the interface).
 
 ## The Firmware
 
@@ -24,12 +24,12 @@ The polar configuration is done by following the steps of the [PolarKinematics c
 
 ## The Slicer
 
-Common slicer softwares (*Cura*, *PrusaSlic3r*, *Slic3r*) can be configured for a round bed shape. However it doesn't seem possible to configure the software to check if the print object is inside our annulus printing area.\
+Common slicer softwares (*Cura*, *PrusaSlic3r*, *Slic3r*) can be configured for a round bed shape. However it doesn't seem possible to configure the software to check if the print object is inside our annulus printing area or not.\
 We created a python script for this purpose (see [`check_polar_gcode.py`](#check_polar_gcodepy)).
 
-## Connecting Servomotor
+## Connecting Servo Motor
 
-Main help links:
+Main help links concerning servo motors and Duet boards:
 - [Connecting external servo motor drivers](https://docs.duet3d.com/en/User_manual/Connecting_hardware/Motors_connecting_external)
 - [Connecting hobby servos and DC motors](https://docs.duet3d.com/en/User_manual/Connecting_hardware/Motors_servos)  
 - [Controlling unused IO pins](https://docs.duet3d.com/en/User_manual/Connecting_hardware/IO_GPIO)  
@@ -40,12 +40,12 @@ Main help links:
 > --  <cite>dc42 in [DUET3D --> servo motor](https://reprap.org/forum/read.php?178,844701,844701#msg-844701) (forum talk)</cite>
 
 It will be easier to power the servo motors with a separate power supply to avoid voltage/current issues.\
-After connecting the servo, we will need to configure it in the config.gd file. Use the [M584](https://docs.duet3d.com/User_manual/Reference/Gcodes/M584) command to remap the axes and use the appropriate [M569](https://docs.duet3d.com/User_manual/Reference/Gcodes/M569) commands to configure the drivers, step pulse timings, closed loops etc. This parts seems a bit tedious and needs details and information.
+After connecting the servo, we will need to configure it in the `config.gd` file. Use the [M584](https://docs.duet3d.com/User_manual/Reference/Gcodes/M584) command to remap the axes and use the appropriate [M569](https://docs.duet3d.com/User_manual/Reference/Gcodes/M569) commands to configure the drivers, step pulse timings, closed loops etc. This parts seems a bit tedious and needs details and information.
 
 
 ## Bed Compensation
 
-See the [mesh bed compensation page](https://docs.duet3d.com/en/User_manual/Connecting_hardware/Z_probe_mesh_bed). Use the [M557](https://docs.duet3d.com/User_manual/Reference/Gcodes#m557-set-z-probe-point-or-define-probing-grid) command with the `R` parameter for configuring a round bed grid. Use the [G29](https://docs.duet3d.com/en/User_manual/Reference/Gcodes#g29-mesh-bed-probe) command to probe the bed, load height map from file, disable mesh bed compensation or save height map.
+See the [mesh bed compensation page](https://docs.duet3d.com/en/User_manual/Connecting_hardware/Z_probe_mesh_bed). Use the [M557](https://docs.duet3d.com/User_manual/Reference/Gcodes#m557-set-z-probe-point-or-define-probing-grid) command with the `R` parameter for configuring a round bed grid in the `config.gd` file. Use the [G29](https://docs.duet3d.com/en/User_manual/Reference/Gcodes#g29-mesh-bed-probe) command to probe the bed, load height map from file, disable mesh bed compensation or save height map.
 
 > Summary of gcode commands related to mesh bed compensation
 >    - `G29` Run file sys/mesh.g, or if that file isn't found then do `G29 S0`
@@ -83,7 +83,7 @@ As *Cura*, *Slic3r* and *PrusaSlic3r* can't check if the print object is inside 
 >   - `-verbose -v`  : enable verbose (print the encountered issues).
 >   - `-h --help`          : print help information.
 
-Print the gcode lines that went wrong using the **verbose mode** (-v). Use the `-r`, `-R`, `-Ox` and `-Oy` parameters to define the annulus printing area.
+Print the gcode lines that went wrong using the **verbose mode** (`-v` parameter). Use the `-r`, `-R`, `-Ox` and `-Oy` parameters to define the annulus printing area.
 
 
 The script also plot the xy-coordinates nozzle path with colors depending on the encountered issues:
@@ -110,4 +110,4 @@ The user might want to redirect the output to a gcode file: in bash, `python3 ge
 
 The parameter lines should follow the following pattern: `order radius origin_x origin_y` (where order is the number of points).\
 The three last arguments can be ommited: default radius is 1.0, default origin is (0.0,0.0).
-For example, the line `4 1 3 0` will represent a square a radius 1.0 centered at (3,0). Hence, the coordinates of the square points will be [(4,0),(3,1),(2,0),(3,-1)].
+For example, the line ''`4 1 3 0`'' will represent a square of radius 1.0 centered at (3,0). Hence, the coordinates of the square points will be [(4,0),(3,1),(2,0),(3,-1)].
