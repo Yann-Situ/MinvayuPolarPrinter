@@ -9,6 +9,25 @@ directory_path = script_path[:-len("check_polar_gcode.py")]
 DEBUG = "-debug" in sys.argv[1:] or "-d" in sys.argv[1:]
 VERBOSE = "-verbose" in sys.argv[1:] or "-v" in sys.argv[1:]
 
+usage = """Usage : pyhton3 check_polar_gcode.py gcode_file1 gcode_file2 ... [-r minradius] [-R maxradius] [-Ox origin_x] [-Oy origin_y] [-d] [-v] [-h]
+
+Check if in the gcode files, the position of the nozzle stays between a distance of minradius and maxradius from the origin. Print out the gcode lines that went wrong with the verbose mode (-v).
+Also plot the nozzle xy-path with colors depending on the encountered issues:
+* \033[33myelow lines\033[m are G0 rapid movement segment.
+* \033[32mgreen lines\033[m are valid segment.
+* \033[34mblue lines\033[m are non-valid segment crossing the inner radius area.
+* \033[31mred lines\033[m are non-valid segment crossing the outer radius area.
+* \033[35mpurple lines\033[m are non-valid segment crossing both the outer and the inner radius area.
+
+-r minradius  : set the minimum radius (default is 0.0).
+-R maxradius  : set the maximum radius (default is +infinite).
+-Ox origin_x  : set the origin x coordinate (default is 0.0).
+-Oy origin_y  : set the origin y coordinate (default is 0.0).
+-debug -d     : enable debug.
+-verbose -v   : enable verbose (print the encountered issues).
+
+-h --help     : print this message."""
+
 r = 0.0
 R = np.inf
 O = np.array([0.0,0.0])
@@ -57,26 +76,10 @@ def distance_squared_from_segment(p1, p2, p):
 ################################################################################
 
 def main():
+    global usage
     if sys.argv[1:] == [] or "-h" in sys.argv[1:] or "--help" in sys.argv[1:]:
-        print("""Usage : pyhton3 check_polar_gcode.py gcode_file1 gcode_file2 ... [-r minradius] [-R maxradius] [-Ox origin_x] [-Oy origin_y] [-d] [-v] [-h]
-
-Check if in the gcode files, the position of the nozzle stays between a distance of minradius and maxradius from the origin. Print out the gcode lines that went wrong with the verbose mode (-v).
-By default plot the nozzle path with colors depending on the encountered issues:
-    * \033[33myelow lines\033[m are G0 rapid movement segment.
-    * \033[32mgreen lines\033[m are valid segment.
-    * \033[34mblue lines\033[m are non-valid segment crossing the inner radius area.
-    * \033[31mred lines\033[m are non-valid segment crossing the outer radius area.
-    * \033[35mpurple lines\033[m are non-valid segment crossing both the outer and the inner radius area.
-
--r minradius  : set the minimum radius (default is 0.0).
--R maxradius  : set the maximum radius (default is +infinite).
--Ox origin_x  : set the origin x coordinate (default is 0.0).
--Oy origin_y  : set the origin y coordinate (default is 0.0).
--debug -d     : enable debug.
--verbose -v   : enable verbose (print the encountered issues).
-
--h ou --help affiche ce message.""")
-        return 1
+        print(usage)
+        return 0
 
     global r
     global R
@@ -101,7 +104,7 @@ By default plot the nozzle path with colors depending on the encountered issues:
 
     for arg in sys.argv[1:]:
         if arg[0] != '-':
-            print_debug("processing "+arg)
+            print("processing "+arg)
             process(arg)
     return 0
 
@@ -110,6 +113,9 @@ def process(filename):
     with open(filename, 'r') as f:
         gcode = f.read()
     gcode_lines = GcodeParser(gcode, include_comments=True).lines
+    if len(gcode_lines) == 0:
+        print("empty gcode file")
+        return 1
 
     line_index = 0
     xy = np.array([None,None])

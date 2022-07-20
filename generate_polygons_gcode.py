@@ -5,11 +5,31 @@ import fileinput
 
 DEBUG = "-debug" in sys.argv[1:] or "-d" in sys.argv[1:]
 
+usage = """Usage : pyhton3 generate_polygons_gcode.py [data_file] [-nohoming] [-d] [-h]
+
+Generate a gcode file corresponding to the print of regular polygons in the xy-plane.
+The script take parameter lines in standard input and write gcode lines in the standard output.
+
+It is possible to use a file as input (eg: `python3 generate_polygons_gcode.py argument_file`).
+It is also possible to use user keyboard input as argument: simply use `python3 generate_polygons_gcode.py` and type the argument lines on keyboard (to exit keyboard input, type 'END' or 'EOF').
+The user might want to redirect the output to a gcode file: `python3 generate_polygons_gcode.py argument_file > gcode_file`.
+
+The parameter lines should follow the following pattern: `order radius origin_x origin_y` (where order is the number of points).
+The three last arguments can be ommited: default radius is 1.0, default origin is (0.0,0.0).
+For example, the line `4 1 3 0` will represent a square a radius 1.0 centered at (3,0). Hence, the coordinates of the square points will be [(4,0),(3,1),(2,0),(3,-1)]
+
+optional arguments:
+-nohoming  : avoid the G28 command at the beginning of the generated gcode_file.
+-d         : enable debug mode.
+-h --help  : print this message.
+"""
+
 f = 900
 
 def print_debug(s):
     if DEBUG:
         print(s)
+
 
 """detect the string "s" in sys.argv[1:] and return [True,float(v)] where v is the string following the found "s". It returns [False,0.0] if it didn't find "s"."""
 def parse_float_argument(s):
@@ -21,17 +41,6 @@ def parse_float_argument(s):
         sys.argv = sys.argv[:i]+sys.argv[i+2:]
         return [True, float(v)]
     return [False, 0.0]
-
-""" return the list of the 4 arguments [order, radius, ox, oy] or [] if no more arguments."""
-def parse_next_arguments():
-    result = []
-    if len(sys.argv) < 4:
-        return result
-    result.append(int(sys.argv.pop(0)))
-    result.append(float(sys.argv.pop(0)))
-    result.append(float(sys.argv.pop(0)))
-    result.append(float(sys.argv.pop(0)))
-    return result
 
 def pol2cart(rho, phi):
     x = rho * np.cos(phi)
@@ -57,7 +66,12 @@ def create_2D_gcodeline(vec2, speed = None, gcodeindex = 1):
 ################################################################################
 
 def main():
-    s = """;Generated with generate_polygons_gcode.py
+    global usage
+    if "-h" in sys.argv[1:] or "--help" in sys.argv[1:]:
+        print(usage)
+        return 0
+
+    s = """; Generated with generate_polygons_gcode.py
 T0"""
     print_debug(s)
     if "-nohoming" not in sys.argv[1:]:
@@ -66,17 +80,29 @@ T0"""
         sys.argv = list(filter(("-nohoming").__ne__, sys.argv))
 
     for line in fileinput.input():
-        if "END" in line:
+        if "END" in line or "EOF" in line:
             break
         args = line.split()
-        if len(args) == 4:
+        if len(args) > 0 :
             args[0] = int(args[0])
-            args[1] = float(args[1])
-            args[2] = float(args[2])
-            args[3] = float(args[3])
+
+            if len(args) > 1:
+                args[1] = float(args[1])
+            else:
+                args.append(1.0)
+
+            if len(args) > 2:
+                args[2] = float(args[2])
+            else:
+                args.append(0.0)
+
+            if len(args) > 3:
+                args[3] = float(args[3])
+            else:
+                args.append(0.0)
             generate_polygon_gcode(args, f)
         else :
-            print("; error in '"+line+"', not 4 arguments")
+            print("; error, no arguments in line '"+line[:-1]+"'.")
     # sys.argv.pop(0)
     # args = parse_next_arguments()
     # while len(args) == 4:
