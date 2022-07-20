@@ -48,22 +48,22 @@ After connecting the servo, we will need to configure it in the config.gd file. 
 See the [mesh bed compensation page](https://docs.duet3d.com/en/User_manual/Connecting_hardware/Z_probe_mesh_bed). Use the [M557](https://docs.duet3d.com/User_manual/Reference/Gcodes#m557-set-z-probe-point-or-define-probing-grid) command with the `R` parameter for configuring a round bed grid. Use the [G29](https://docs.duet3d.com/en/User_manual/Reference/Gcodes#g29-mesh-bed-probe) command to probe the bed, load height map from file, disable mesh bed compensation or save height map.
 
 > Summary of gcode commands related to mesh bed compensation
--    `G29` Run file sys/mesh.g, or if that file isn't found then do `G29 S0`
--    `G29` S0 Probe the bed and save height map to file
--    `G29` S1 Load height map from file
--    `G29` S2 Clear height map
--    `G29` S3 P"filename" Save height map to file
--    `G30` Probe the bed at a single point (can be used to measure Z probe trigger height)
--    `G31` Set Z probe trigger height, threshold and offsets from the print head reference point
--    `G32` Run sys/bed.g file. You can put commands in bed.g to perform mesh bed levelling, e.g. `M401` followed by `G29 S0` followed by `M402`.
--    `M374` Save height map to file
--    `M375` Load height map from file (same as `G29 S1`)
--    `M376` Set bed compensation taper height
--    `M401` Deploy Z probe (runs `sys/deployprobe#.g` file where # is the Z probe number, or file sys/deployprobe.g if that file isn't found).
--    `M402` Retract Z probe (runs `sys/retractprobe#.g` file where # is the Z probe number, or sys/retractprobe.g if that file isn't found)
--    `M557` Define the probing grid
--    `M558` Set Z probe type, dive height, probing speed, travel speed between probe points, and probe recovery time
--    `M561` Clear height map (same as `G29 S2`)
+>    - `G29` Run file sys/mesh.g, or if that file isn't found then do `G29 S0`
+>    - `G29` S0 Probe the bed and save height map to file
+>    - `G29` S1 Load height map from file
+>    - `G29` S2 Clear height map
+>    - `G29` S3 P"filename" Save height map to file
+>    - `G30` Probe the bed at a single point (can be used to measure Z probe trigger height)
+>    - `G31` Set Z probe trigger height, threshold and offsets from the print head reference point
+>    - `G32` Run sys/bed.g file. You can put commands in bed.g to perform mesh bed levelling, e.g. `M401` followed by `G29 S0` followed by `M402`.
+>    - `M374` Save height map to file
+>    - `M375` Load height map from file (same as `G29 S1`)
+>    - `M376` Set bed compensation taper height
+>    - `M401` Deploy Z probe (runs `sys/deployprobe#.g` file where # is the Z probe number, or file sys/deployprobe.g if that file isn't found).
+>    - `M402` Retract Z probe (runs `sys/retractprobe#.g` file where # is the Z probe number, or sys/retractprobe.g if that file isn't found)
+>    - `M557` Define the probing grid
+>    - `M558` Set Z probe type, dive height, probing speed, travel speed between probe points, and probe recovery time
+>    - `M561` Clear height map (same as `G29 S2`)
 
 
 ## Additional Python Scripts
