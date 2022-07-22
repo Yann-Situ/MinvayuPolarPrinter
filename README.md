@@ -27,6 +27,12 @@ The polar configuration is done by following the steps of the [PolarKinematics c
 Common slicer softwares (*Cura*, *PrusaSlic3r*, *Slic3r*) can be configured for a round bed shape. However it doesn't seem possible to configure the software to check if the print object is inside our annulus printing area or not.\
 We created a python script for this purpose (see [`check_polar_gcode.py`](#check_polar_gcodepy)).
 
+## Testing The Printer
+
+It is possible test the motors individually by using the relative mode ([G91](https://docs.duet3d.com/User_manual/Reference/Gcodes/G91) command) and then using the G1 command with H2 parameter to move individual motors. In the relative mode in polar configuration, the `X` parameter stands for the radius axis whereas the `Y` parameter stands for the rotational axis (the `Y` value must be specified in **degrees**).
+
+The user can also use the [`generate_polygons_gcode.py`](#generate_polygons_gcodepy) python script to create simple gcode for 2D polygonal structures in order to test the *xy*-plane movement.
+
 ## Connecting Servo Motor
 
 Main help links concerning servo motors and Duet boards:
@@ -71,7 +77,7 @@ This directory contains two handmade python scripts:
 
 ### `check_polar_gcode.py`
 
-Take a **gcode file** as input and check if the nozzle xy-coordinate movement stays between a distance of `minradius` and `maxradius` from the `origin`.\
+Take a **gcode file** as input and check if the nozzle *xy*-coordinate movement stays between a distance of `minradius` and `maxradius` from the `origin`.\
 As *Cura*, *Slic3r* and *PrusaSlic3r* can't check if the print object is inside our annulus printing area, it is possible to use this script on the resulting gcode file to check if the print will be valid.
 
    Usage : `pyhton3 check_polar_gcode.py gcode_file [-r minradius] [-R maxradius] [-Ox origin_x] [-Oy origin_y] [-d] [-v] [-h]`
@@ -86,7 +92,7 @@ As *Cura*, *Slic3r* and *PrusaSlic3r* can't check if the print object is inside 
 Print the gcode lines that went wrong using the **verbose mode** (`-v` parameter). Use the `-r`, `-R`, `-Ox` and `-Oy` parameters to define the annulus printing area.
 
 
-The script also plot the xy-coordinates nozzle path with colors depending on the encountered issues:
+The script also plot the *xy*-coordinates nozzle path with colors depending on the encountered issues:
 >    - **yelow lines** are G0 rapid movement segment. Those segments can also raise issues even though it might not be a problem in practice (as G0 segment mostly represent non extruding rapid movement).
 >    - **green lines** are valid segment.
 >    - **blue lines** are non-valid segment crossing the inner radius area.
@@ -95,7 +101,7 @@ The script also plot the xy-coordinates nozzle path with colors depending on the
 
 ### `generate_polygons_gcode.py`
 
-Generate a gcode file corresponding to the print of regular polygons in the xy-plane.
+Generate a gcode file corresponding to the print of regular polygons in the *xy*-plane.
 The script take parameter lines in standard input and write gcode lines in the standard output.\
 In the MinvayuPolarPrinter project, we use this script to create gcode file to test the xy polar movement.
 

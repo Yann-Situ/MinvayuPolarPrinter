@@ -1,5 +1,6 @@
 # Movement in RepRapFirmware
-> This file is a copy of the *Developer-documentation/Movement_in_RepRapFirmware.odt* file in the [RepRapFirmware repository](https://github.com/Duet3D/RepRapFirmware) with additional comments about the actual location of functions in the code.
+> This file is a copy of the *Developer-documentation/Movement_in_RepRapFirmware.odt* file in the [RepRapFirmware repository](https://github.com/Duet3D/RepRapFirmware) with additional comments about the actual location of functions in the code.\
+The file is useful if one wants to dive in the RepRapFirmware c++ code.
 
 ## Overview
 
