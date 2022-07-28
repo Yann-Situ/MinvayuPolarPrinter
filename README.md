@@ -31,15 +31,15 @@ To upload those information into the board, the user needs to edit the following
     > `M569 P[drive number] S1`                              ; physical drive [drive number] goes forwards\
     > `M569 P[drive number] S0`                              ; physical drive [drive number] goes backwards
 - Motor speeds:
-    > `M92 X[r speed] Y[$\theta$ speed] Z[z speed] E[extruder speed]`       ; set steps per mm (Y is in steps per degree)\
+    > `M92 X[r speed] Y[theta speed] Z[z speed] E[extruder speed]`       ; set steps per mm (Y is in steps per degree)\
     > `M566 X__ Y__ Z__ E__`     ; set maximum instantaneous speed changes (mm/min)
 - Polar configuration:
-    > `M669 K7 R[r min]:[r max] H[r homing switch] F[$\theta$ max speed] A[$\theta$ max acceleration]`  ; with F in deg/s and A in deg/s^2. The user might also want to use the T and S parameters, see [M669](https://docs.duet3d.com/User_manual/Reference/Gcodes/M669).
+    > `M669 K7 R[r min]:[r max] H[r homing switch] F[theta max speed] A[theta max acceleration]`  ; with F in deg/s and A in deg/s^2. The user might also want to use the T and S parameters, see [M669](https://docs.duet3d.com/User_manual/Reference/Gcodes/M669).
 - Axis Limits:
-    > `M208 X[r min] Y[$\theta$ min] Z[z min] S1`                       ; set axis minima\
-    > `M208 X[r max] Y[$\theta$ max] Z[z max] S0`                  ; set axis maxima
+    > `M208 X[r min] Y[theta min] Z[z min] S1`                       ; set axis minima\
+    > `M208 X[r max] Y[theta max] Z[z max] S0`                  ; set axis maxima
 - Z-probes and probe grid:
-    > See the [Bed Compensation](#bedcompensation) section.
+    > See the [Bed Compensation](#bed-compensation) section.
 
 ---
 
@@ -55,7 +55,7 @@ A simple way to create gcode files is by using common slicer software (*Cura*, *
 We created a python script for this purpose (see [`check_polar_gcode.py`](#check_polar_gcodepy)).
 
 
-The user can also use the [`generate_polygons_gcode.py`](#generate_polygons_gcodepy) python script to create simple gcode for 2D polygonal structures in order to test the *xy*-plane movement. Other 2D gcode generator scripts ar listed in [External scripts](#externalscripts) section.
+The user can also use the [`generate_polygons_gcode.py`](#generate_polygons_gcodepy) python script to create simple gcode for 2D polygonal structures in order to test the *xy*-plane movement. Other 2D gcode generator scripts ar listed in [External scripts](#external-scripts) section.
 
 ---
 
