@@ -39,7 +39,7 @@ To upload those information into the board, the user needs to edit the following
     > `M208 X[r min] Y[theta min] Z[z min] S1`                       ; set axis minima\
     > `M208 X[r max] Y[theta max] Z[z max] S0`                  ; set axis maxima
 - Z-probes and probe grid:
-    > See the [Bed Compensation](#bed-compensation) section.
+    > See the [Bed compensation](#bed-compensation) section.
 
 ---
 
@@ -60,7 +60,7 @@ The user can also use the [`generate_polygons_gcode.py`](#generate_polygons_gcod
 ---
 
 ## Future Improvements
-### Connecting Servo Motor
+### Connecting servo motors
 
 Main help links concerning servo motors and Duet boards:
 - [Connecting external servo motor drivers](https://docs.duet3d.com/en/User_manual/Connecting_hardware/Motors_connecting_external)
@@ -76,7 +76,7 @@ It will be easier to power the servo motors with a separate power supply to avoi
 After connecting the servo, we will need to configure it in the **config.gd** file. Use the [M584](https://docs.duet3d.com/User_manual/Reference/Gcodes/M584) command to remap the axes and use the appropriate [M569](https://docs.duet3d.com/User_manual/Reference/Gcodes/M569) commands to configure the drivers, step pulse timings, closed loops etc. This parts seems a bit tedious and needs details and information.
 
 
-### Bed Compensation
+### Bed compensation
 
 See the [mesh bed compensation page](https://docs.duet3d.com/en/User_manual/Connecting_hardware/Z_probe_mesh_bed). Use the [M557](https://docs.duet3d.com/User_manual/Reference/Gcodes#m557-set-z-probe-point-or-define-probing-grid) command with the `R` parameter for configuring a round bed grid in the **config.gd** file. Use the [G29](https://docs.duet3d.com/en/User_manual/Reference/Gcodes#g29-mesh-bed-probe) command to probe the bed, load height map from file, disable mesh bed compensation or save height map.
 
