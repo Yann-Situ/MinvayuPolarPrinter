@@ -36,10 +36,12 @@ To upload those information into the board, the user needs to edit the following
 - Polar configuration:
     > `M669 K7 R[r min]:[r max] H[r homing switch] F[theta max speed] A[theta max acceleration]`  ; with F in deg/s and A in deg/s^2. The user might also want to use the T and S parameters, see [M669](https://docs.duet3d.com/User_manual/Reference/Gcodes/M669).
 - Axis Limits:
-    > `M208 X[x min] Y[y min] Z[z min] S1`                       ; set axis minima\
+    > `M208 X[x min] Y[y min] Z[z min] S1`                  ; set axis minima\
     > `M208 X[x max] Y[y max] Z[z max] S0`                  ; set axis maxima
 - Z-probes and probe grid:
     > See the [Bed compensation](#bed-compensation) section.
+
+The user might also need to change the **homing files** because the homing values used might be to low for the actual printer.
 
 ---
 
