@@ -1,41 +1,66 @@
 # MinvayuPolarPrinter
-Information about Minvayu's polar printer. The MinvayPolarPrinter runs on a [DuetWifi board v.1.26](https://www.duet3d.com/DuetWifi) with [RepRapFirmware v.3.4.1](#the-firmware). It is a 3D printer for architectural purpose with a central rotating axis (similar to a crane).
+Information about Minvayu's polar printer board and firmware configuration. The MinvayPolarPrinter runs on a [DuetWifi board v.1.26](https://www.duet3d.com/DuetWifi) with [RepRapFirmware v.3.4.1](#the-firmware). It is a 3D printer for architectural purpose with a central rotating axis (similar to a crane).
+
 
 ## Connecting With The Duet Board
 
 See [Getting connected to your Duet](https://docs.duet3d.com/en/How_to_guides/Getting_connected/Getting_connected_to_your_Duet) for detailed information.
 
 The best way to communicate with the board is the **DuetWebControl** interface.
-**DuetWebControl** can be used to control the board using a computer or smartphone connected to the same wifi point. With this interface, it is possible to send gcode lines, run gcode macros, change configuration, start printing work and even handle height maps. See [Duet Web Control Manual](https://docs.duet3d.com/User_manual/Reference/Duet_Web_Control_Manual) for more information.
+*DuetWebControl* can be used to control the board using a computer or smartphone connected to the same wifi point. With this interface, it is possible to send gcode lines, run gcode macros, change configuration, start printing work and even handle height maps. See [Duet Web Control Manual](https://docs.duet3d.com/User_manual/Reference/Duet_Web_Control_Manual) for more information.
 
-To access **DuetWebControl**, it is firstly necessary to communicate some gcode to the Duet board using another interface. To do that, it is possible to use the GUI interface `cutecom` on linux (or `YAT` on windows) after wiring the board to the computer.\
+To access *DuetWebControl*, it is firstly necessary to communicate some gcode to the Duet board using another interface. To do that, it is possible to use the GUI interface `cutecom` on linux (or `YAT` on windows) after wiring the board to the computer.\
 Then, the user can connect the board to the wifi using [M552](https://docs.duet3d.com/User_manual/Reference/Gcodes/M552) and [M587](https://docs.duet3d.com/User_manual/Reference/Gcodes/M587) commands.
 
-After connecting, send `M552 S1` to get the IP address and connect to the **DuetWebControl** by typing the address in the browser.\
-A local name address is also created: our **DuetWebControl** MinvayuPolarPrinter interface can be accessed using the following link http://www.polarprinter.local (note that the board needs to be powered up to access the interface).
+After connecting, send `M552 S1` to get the IP address and connect to the *DuetWebControl* by typing the address in the browser.\
+A local name address is also created: our *DuetWebControl* MinvayuPolarPrinter interface can be accessed using the following link http://www.polarprinter.local (note that the board needs to be powered up to access the interface).
 
-## The Firmware
+---
 
-The MinvayPolarPrinter uses the RepRapFirmware v.3.4.1 ([main Github page](https://github.com/Duet3D/RepRapFirmware) and  [releases page](https://github.com/Duet3D/RepRapFirmware/releases)) with a *polar kinematics configuration*. The polar kinematics configuration is intended to be used for a *turntable polar printer*, but it can also be used for our purpose, considering the whole universe as a turntable.
+## Configuring The Firmware
 
-The polar configuration is done by following the steps of the [PolarKinematics configuration page](https://docs.duet3d.com/User_manual/Machine_configuration/Configuration_Polar). Most of the work is done by the [M669](https://docs.duet3d.com/User_manual/Reference/Gcodes/M669) command, that sets parameters such as radius limits and turntable speed. It is also important to adapt the **homing files**, depending on the homing system (*z probing* or *z endstop* homing system? $\theta$ endstop?).
+The MinvayPolarPrinter uses the RepRapFirmware v.3.4.1 ([main Github page](https://github.com/Duet3D/RepRapFirmware) and  [releases page](https://github.com/Duet3D/RepRapFirmware/releases)) with a **polar kinematics configuration**.
 
-> In the RepRapFirmware c++ code, M669 K7 will set the current `Kinematics` class to `PolarKinematics`. Then, during run-time, the program will call the `Kinematics::CartesianToMotorSteps` and `Kinematics::MotorStepsToCartesian` functions that will realize the polar/cartesian conversions (call *atan2* and *sqrt* functions).
+*Polar kinematics configuration* is intended to be used for a *turntable polar printer*, but it can also be used for our purpose, considering the whole universe as a turntable. The polar configuration was done by following the steps of the [PolarKinematics configuration page](https://docs.duet3d.com/User_manual/Machine_configuration/Configuration_Polar). Most of the work was done by the [M669](https://docs.duet3d.com/User_manual/Reference/Gcodes/M669) command, that sets parameters such as radius limits and turntable speed. It was also important to adapt the **homing files**, depending on the homing system (*z probing* or *z endstop* homing system? $\theta$ endstop or just redefine $\theta$ origin?).
 
-For the whole configuration, we need a bunch of information on the mechanical details of the printer. Those information are listed in the [Required information page](https://docs.duet3d.com/User_manual/Overview/Adapting).
+> In the RepRapFirmware c++ code, M669 K7 will set the current `Kinematics` class to `PolarKinematics`. Then, during run-time, the program will call the `Kinematics::CartesianToMotorSteps` and `Kinematics::MotorStepsToCartesian` functions that will realize the polar/cartesian conversions (calling *atan2* and *sqrt* functions at runtime).
 
-## The Slicer
+For the whole printer configuration, information on the mechanical details of the printer are needed. Potential required information are listed in the [Required information page](https://docs.duet3d.com/User_manual/Overview/Adapting).\
+To upload those information into the board, the user needs to edit the following lines in the **config.g** file (it can be edited through *DuetWebControl* without turning off the board):
+- Drive directions:
+    > `M569 P[drive number] S1`                              ; physical drive [drive number] goes forwards\
+    > `M569 P[drive number] S0`                              ; physical drive [drive number] goes backwards
+- Motor speeds:
+    > `M92 X[r speed] Y[$\theta$ speed] Z[z speed] E[extruder speed]`       ; set steps per mm (Y is in steps per degree)\
+    > `M566 X__ Y__ Z__ E__`     ; set maximum instantaneous speed changes (mm/min)
+- Polar configuration:
+    > `M669 K7 R[r min]:[r max] H[r homing switch] F[$\theta$ max speed] A[$\theta$ max acceleration]`  ; with F in deg/s and A in deg/s^2. The user might also want to use the T and S parameters, see [M669](https://docs.duet3d.com/User_manual/Reference/Gcodes/M669).
+- Axis Limits:
+    > `M208 X[r min] Y[$\theta$ min] Z[z min] S1`                       ; set axis minima\
+    > `M208 X[r max] Y[$\theta$ max] Z[z max] S0`                  ; set axis maxima
+- Z-probes and probe grid:
+    > See the [Bed Compensation](#bedcompensation) section.
 
-Common slicer softwares (*Cura*, *PrusaSlic3r*, *Slic3r*) can be configured for a round bed shape. However it doesn't seem possible to configure the software to check if the print object is inside our annulus printing area or not.\
-We created a python script for this purpose (see [`check_polar_gcode.py`](#check_polar_gcodepy)).
+---
 
 ## Testing The Printer
 
+### Testing individual motor
 It is possible test the motors individually by using the relative mode ([G91](https://docs.duet3d.com/User_manual/Reference/Gcodes/G91) command) and then using the G1 command with H2 parameter to move individual motors. In the relative mode in polar configuration, the `X` parameter stands for the radius axis whereas the `Y` parameter stands for the rotational axis (the `Y` value must be specified in **degrees**).
 
-The user can also use the [`generate_polygons_gcode.py`](#generate_polygons_gcodepy) python script to create simple gcode for 2D polygonal structures in order to test the *xy*-plane movement.
+### Testing gcode files
+The user can upload they own gcode files into the board using **DuetWebControl** interface.
 
-## Connecting Servo Motor
+A simple way to create gcode files is by using common slicer software (*Cura*, *PrusaSlic3r*, *Slic3r*) which can be configured for a round bed shape. However it doesn't seem possible to configure those software to check if the print object is inside our annulus printing area or not.\
+We created a python script for this purpose (see [`check_polar_gcode.py`](#check_polar_gcodepy)).
+
+
+The user can also use the [`generate_polygons_gcode.py`](#generate_polygons_gcodepy) python script to create simple gcode for 2D polygonal structures in order to test the *xy*-plane movement. Other 2D gcode generator scripts ar listed in [External scripts](#externalscripts) section.
+
+---
+
+## Future Improvements
+### Connecting Servo Motor
 
 Main help links concerning servo motors and Duet boards:
 - [Connecting external servo motor drivers](https://docs.duet3d.com/en/User_manual/Connecting_hardware/Motors_connecting_external)
@@ -48,12 +73,12 @@ Main help links concerning servo motors and Duet boards:
 > --  <cite>dc42 in [DUET3D --> servo motor](https://reprap.org/forum/read.php?178,844701,844701#msg-844701) (forum talk)</cite>
 
 It will be easier to power the servo motors with a separate power supply to avoid voltage/current issues.\
-After connecting the servo, we will need to configure it in the `config.gd` file. Use the [M584](https://docs.duet3d.com/User_manual/Reference/Gcodes/M584) command to remap the axes and use the appropriate [M569](https://docs.duet3d.com/User_manual/Reference/Gcodes/M569) commands to configure the drivers, step pulse timings, closed loops etc. This parts seems a bit tedious and needs details and information.
+After connecting the servo, we will need to configure it in the **config.gd** file. Use the [M584](https://docs.duet3d.com/User_manual/Reference/Gcodes/M584) command to remap the axes and use the appropriate [M569](https://docs.duet3d.com/User_manual/Reference/Gcodes/M569) commands to configure the drivers, step pulse timings, closed loops etc. This parts seems a bit tedious and needs details and information.
 
 
-## Bed Compensation
+### Bed Compensation
 
-See the [mesh bed compensation page](https://docs.duet3d.com/en/User_manual/Connecting_hardware/Z_probe_mesh_bed). Use the [M557](https://docs.duet3d.com/User_manual/Reference/Gcodes#m557-set-z-probe-point-or-define-probing-grid) command with the `R` parameter for configuring a round bed grid in the `config.gd` file. Use the [G29](https://docs.duet3d.com/en/User_manual/Reference/Gcodes#g29-mesh-bed-probe) command to probe the bed, load height map from file, disable mesh bed compensation or save height map.
+See the [mesh bed compensation page](https://docs.duet3d.com/en/User_manual/Connecting_hardware/Z_probe_mesh_bed). Use the [M557](https://docs.duet3d.com/User_manual/Reference/Gcodes#m557-set-z-probe-point-or-define-probing-grid) command with the `R` parameter for configuring a round bed grid in the **config.gd** file. Use the [G29](https://docs.duet3d.com/en/User_manual/Reference/Gcodes#g29-mesh-bed-probe) command to probe the bed, load height map from file, disable mesh bed compensation or save height map.
 
 > Summary of gcode commands related to mesh bed compensation
 >    - `G29` Run file sys/mesh.g, or if that file isn't found then do `G29 S0`
@@ -63,7 +88,7 @@ See the [mesh bed compensation page](https://docs.duet3d.com/en/User_manual/Conn
 >    - `G29` S3 P"filename" Save height map to file
 >    - `G30` Probe the bed at a single point (can be used to measure Z probe trigger height)
 >    - `G31` Set Z probe trigger height, threshold and offsets from the print head reference point
->    - `G32` Run sys/bed.g file. You can put commands in bed.g to perform mesh bed levelling, e.g. `M401` followed by `G29 S0` followed by `M402`.
+>    - `G32` Run sys/bed.g file. You can put commands in bed.g to perform mesh bed leveling, e.g. `M401` followed by `G29 S0` followed by `M402`.
 >    - `M374` Save height map to file
 >    - `M375` Load height map from file (same as `G29 S1`)
 >    - `M376` Set bed compensation taper height
@@ -73,13 +98,14 @@ See the [mesh bed compensation page](https://docs.duet3d.com/en/User_manual/Conn
 >    - `M558` Set Z probe type, dive height, probing speed, travel speed between probe points, and probe recovery time
 >    - `M561` Clear height map (same as `G29 S2`)
 
+---
 
-## Additional Python Scripts
+## Additional Helpful Scripts
 This directory contains two handmade python scripts:
 
-### `check_polar_gcode.py`
+### check_polar_gcode.py
 
-Take a **gcode file** as input and check if the nozzle *xy*-coordinate movement stays between a distance of `minradius` and `maxradius` from the `origin`.\
+Take a gcode file as input and check if the nozzle *xy*-coordinate movement stays between a distance of `minradius` and `maxradius` from the `origin`.\
 As *Cura*, *Slic3r* and *PrusaSlic3r* can't check if the print object is inside our annulus printing area, it is possible to use this script on the resulting gcode file to check if the print will be valid.
 
    Usage : `pyhton3 check_polar_gcode.py gcode_file [-r minradius] [-R maxradius] [-Ox origin_x] [-Oy origin_y] [-d] [-v] [-h]`
@@ -101,7 +127,7 @@ The script also plot the *xy*-coordinates nozzle path with colors depending on t
 >    - **red lines** are non-valid segment crossing the outer radius area.
 >    - **purple lines** are non-valid segment crossing both the outer and the inner radius area.
 
-### `generate_polygons_gcode.py`
+### generate_polygons_gcode.py
 
 Generate a gcode file corresponding to the print of regular polygons in the *xy*-plane.
 The script take parameter lines in standard input and write gcode lines in the standard output.\
@@ -120,6 +146,6 @@ The parameter lines should follow the following pattern: `order radius origin_x 
 The three last arguments can be ommited: default radius is 1.0, default origin is (0.0,0.0).
 For example, the line ''`4 1 3 0`'' will represent a square of radius 1.0 centered at (3,0). Hence, the coordinates of the square points will be [(4,0),(3,1),(2,0),(3,-1)].
 
-### External Scripts
-[text-to-gcode](https://github.com/Stypox/text-to-gcode)
+### External scripts
+[text-to-gcode](https://github.com/Stypox/text-to-gcode)\
 [image-to-gcode](https://github.com/Stypox/image-to-gcode)
