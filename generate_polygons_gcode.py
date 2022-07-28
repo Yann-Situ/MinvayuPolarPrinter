@@ -24,7 +24,7 @@ optional arguments:
 -h --help  : print this message.
 """
 
-f = 900
+f = 1200
 
 def print_debug(s):
     if DEBUG:

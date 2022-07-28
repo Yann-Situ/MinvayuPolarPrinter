@@ -1,5 +1,5 @@
 # MinvayuPolarPrinter
-Information about Minvayu's polar printer. The MinvayPolarPrinter runs on a [DuetWifi board](https://www.duet3d.com/DuetWifi) with [RepRapFirmware v.3.4.1](#the-firmware). It is a 3D printer for architectural purpose with a central rotating axis (similar to a crane).
+Information about Minvayu's polar printer. The MinvayPolarPrinter runs on a [DuetWifi board v.1.26](https://www.duet3d.com/DuetWifi) with [RepRapFirmware v.3.4.1](#the-firmware). It is a 3D printer for architectural purpose with a central rotating axis (similar to a crane).
 
 ## Connecting With The Duet Board
 
@@ -21,6 +21,8 @@ The MinvayPolarPrinter uses the RepRapFirmware v.3.4.1 ([main Github page](https
 The polar configuration is done by following the steps of the [PolarKinematics configuration page](https://docs.duet3d.com/User_manual/Machine_configuration/Configuration_Polar). Most of the work is done by the [M669](https://docs.duet3d.com/User_manual/Reference/Gcodes/M669) command, that sets parameters such as radius limits and turntable speed. It is also important to adapt the **homing files**, depending on the homing system (*z probing* or *z endstop* homing system? $\theta$ endstop?).
 
 > In the RepRapFirmware c++ code, M669 K7 will set the current `Kinematics` class to `PolarKinematics`. Then, during run-time, the program will call the `Kinematics::CartesianToMotorSteps` and `Kinematics::MotorStepsToCartesian` functions that will realize the polar/cartesian conversions (call *atan2* and *sqrt* functions).
+
+For the whole configuration, we need a bunch of information on the mechanical details of the printer. Those information are listed in the [Required information page](https://docs.duet3d.com/User_manual/Overview/Adapting).
 
 ## The Slicer
 
@@ -112,7 +114,7 @@ Usage : `pyhton3 generate_polygons_gcode.py [argument_file] [-nohoming] [-d] [-h
 >- `-h --help`  : print this message
 
 The user can use a file as input or use keyboard input as argument: simply use `python3 generate_polygons_gcode.py` and type the argument lines on keyboard (to exit keyboard input, type *'END'* or *'EOF'*).\
-The user might want to redirect the output to a gcode file: in bash, `python3 generate_polygons_gcode.py argument_file > gcode_file` will do the job.
+The user might want to redirect the output to a gcode file: in bash, `python3 generate_polygons_gcode.py argument_file > gcode_file` will do the job. For example: `python3 generate_polygons_gcode.py test.datafile > test.gcode`
 
 The parameter lines should follow the following pattern: `order radius origin_x origin_y` (where order is the number of points).\
 The three last arguments can be ommited: default radius is 1.0, default origin is (0.0,0.0).
