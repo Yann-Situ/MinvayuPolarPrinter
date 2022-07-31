@@ -9,11 +9,12 @@ See [Getting connected to your Duet](https://docs.duet3d.com/en/How_to_guides/Ge
 The best way to communicate with the board is the **DuetWebControl** interface.
 *DuetWebControl* can be used to control the board using a computer or smartphone connected to the same wifi point. With this interface, it is possible to send gcode lines, run gcode macros, change configuration, start printing work and even handle height maps. See [Duet Web Control Manual](https://docs.duet3d.com/User_manual/Reference/Duet_Web_Control_Manual) for more information.
 
-To access *DuetWebControl*, it is firstly necessary to communicate some gcode to the Duet board using another interface. To do that, it is possible to use the GUI interface `cutecom` on linux (or `YAT` on windows) after wiring the board to the computer.\
+To access *DuetWebControl* on a new wifi network, it is firstly necessary to communicate some gcode to the Duet board using another interface. To do that, it is possible to use the GUI interface `cutecom` on linux (or `YAT` on windows) after wiring the board to the computer.\
 Then, the user can connect the board to the wifi using [M552](https://docs.duet3d.com/User_manual/Reference/Gcodes/M552) and [M587](https://docs.duet3d.com/User_manual/Reference/Gcodes/M587) commands.
 
-After connecting, send `M552 S1` to get the IP address and connect to the *DuetWebControl* by typing the address in the browser.\
-A local name address is also created: our *DuetWebControl* MinvayuPolarPrinter interface can be accessed using the following link http://www.polarprinter.local (note that the board needs to be powered up to access the interface).
+After connecting, send `M552 S1` to get the IP address and connect to the *DuetWebControl* by typing the address in the browser.
+A local name address is also created: our *DuetWebControl* MinvayuPolarPrinter interface can be accessed using the following link http://www.polarprinter.local (note that the board needs to be powered up to access the interface).\
+For example, the Duet board is already connected to the *csair* wifi (in CSR) and can be accessed from any device connected to *csair* by accessing the link http://www.polarprinter.local
 
 ---
 
@@ -99,6 +100,10 @@ See the [mesh bed compensation page](https://docs.duet3d.com/en/User_manual/Conn
 >    - `M557` Define the probing grid
 >    - `M558` Set Z probe type, dive height, probing speed, travel speed between probe points, and probe recovery time
 >    - `M561` Clear height map (same as `G29 S2`)
+
+The user can also modify the **retractprobe.g** and the **deployprobe.g** files that are respectively called before and after probing.
+
+Currently, the board is configured with an endstop probing system. the endstop is connected to the *e0stop* pin.
 
 ---
 
